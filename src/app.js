@@ -8,15 +8,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-const repositories = [{
-   id: "uuid", 
-   title: 'Desafio Node.js',
-  url: 'http://github.com/...', 
-  techs: ["Node.js", "..."], 
-  likes: 0 
-}];
-
-
+const repositories = [];
 
 //Rota que lista todos os repositórios;
 app.get("/repositories", (request, response) => {
@@ -53,16 +45,25 @@ app.post("/repositories", (request, response) => {
 // que possua o id igual ao id presente nos parâmetros da rota;
 app.put("/repositories/:id", (request, response) => {
 // TODO
-// const { id } = request.params;
+const { id } = request.params;
+const { url, title, techs } = request.body;
+const repositoryIndex = repositories.findIndex(repository => repository.id === id);
 
-// const repositoryIndex = repository.findIndex(repository => repository.id) === id;
+if (repositoryIndex < 0) {
+  return response.status(400).json({
+    error: 'Project Not Found'
+  });
+}
+const repository = {
+  id,
+  title,
+  url,
+  techs,
+}
 
-// if(repositoryIndex < 0) {
-//   return response.status(400).json({
-//     error:'Repository not Found'
-//   })
+repositories[repositoryIndex] = repository;
+return response.json(repository);
 
-// }
 });
 
 
